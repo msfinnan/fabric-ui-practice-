@@ -1,50 +1,39 @@
 import { Toggle, DefaultButton } from "office-ui-fabric-react";
-import * as React from 'react';
+import * as React from "react";
+import { observable, action } from "mobx";
+import { observer } from "mobx-react";
 
-interface Props {
+interface ToggleProps {
     label: string;
+    inlineLabel: boolean;
     onText: string;
     offText: string;
-    checked: boolean; 
-}
-
-interface State {
     checked: boolean;
 }
 
-export class ToggleComponent extends React.Component<Props, State> {
-   constructor(props: Props){
-       super(props)
-       this.state = {
-           checked: this.props.checked
-       }
-   }
+@observer
+export class ToggleComponent extends React.Component<ToggleProps, {}> {
 
-
-
+    @observable private checked = this.props.checked;
+    
+    @action
     private onChange = () => {
-      
-        this.setState(state => ({
-            checked: !state.checked
-        }));
-        
-        console.log('toggle is ' + (this.state.checked ? 'checked' : 'not checked'));
-      }
-    private showButton = (): boolean => {
-        return !this.state.checked;
+        this.checked = !this.checked;
+        console.log("toggle is " + (this.checked ? "on (checked)" : "off (not checked)"));
     }
 
     public render(): any {
         return (
             <div>
-            <Toggle 
-                label = {this.props.label}
-                onText = {this.props.onText}
-                offText = {this.props.offText}
-                onChange = {this.onChange}
-                checked = {this.state.checked}
-            /> 
-            <DefaultButton disabled={this.showButton()}>Disabled if toggle is off</DefaultButton>
+                <Toggle
+                    label={this.props.label}
+                    inlineLabel={this.props.inlineLabel}
+                    onText={this.props.onText}
+                    offText={this.props.offText}
+                    onChange={this.onChange}
+                    checked={this.checked}
+                />
+                <DefaultButton disabled={!this.checked}>Button disabled when toggle is off</DefaultButton>
             </div>
         )
     }
